@@ -56,11 +56,25 @@ class OpenSubsonic:
 
     # region Endpoints
     # Sort endpoints by alphabetical order
+    def add_chat_message(self, message: str) -> responses.SubsonicResponse:
+        """Adds a message to the chat log.
+
+        Args:
+            message (str): The chat message.
+
+        Returns:
+            responses.SubsonicResponse: An empty ``responses.SubsonicResponse`` element
+            on success
+        """
+        request = self._authenticated_request_to("addChatMessage", message=message)
+        return responses.SubsonicResponse(request.text)
+
     def ping(self) -> responses.SubsonicResponse:
         """Test connectivity with the server.
 
         Returns:
-            responses.SubsonicResponse: The server's response.
+            responses.SubsonicResponse: An empty ``responses.SubsonicResponse`` element
+            on success
         """
         request = self._authenticated_request_to("ping")
         return responses.SubsonicResponse(request.text)
@@ -78,8 +92,10 @@ class OpenSubsonic:
             **kwargs,
         }  # pyright: ignore[reportUnknownVariableType]
 
-    def _authenticated_request_to(self, endpoint: str) -> "Response":
-        return self._client.get(f"/{endpoint}", params=self._get_params())
+    def _authenticated_request_to(self,
+                                  endpoint: str,
+                                  **kwargs: dict[str, str]) -> "Response":
+        return self._client.get(f"/{endpoint}", params=self._get_params(**kwargs))
 
     @staticmethod
     def _is_response_ok(response: dict[any]) -> bool:

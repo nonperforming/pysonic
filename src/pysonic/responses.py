@@ -83,7 +83,7 @@ class SubsonicResponse(_BaseResponse):
 
         Returns:
             bool: ``True`` if the response is ok.
-        """  # noqa: D401
+        """
         return self.status == "ok"
 
 

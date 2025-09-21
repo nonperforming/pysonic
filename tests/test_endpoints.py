@@ -7,8 +7,8 @@ from pysonic import OpenSubsonic
 
 load_dotenv()
 
-@pytest.fixture
-def opensubsonic() -> OpenSubsonic:
+
+def get_opensubsonic() -> OpenSubsonic:
     return OpenSubsonic(
         "pysonic testing",
         env["SUBSONIC_URL"],
@@ -17,8 +17,20 @@ def opensubsonic() -> OpenSubsonic:
     )
 
 
+on_navidrome = get_opensubsonic().ping().type == "navidrome"
+
+
+@pytest.fixture
+def opensubsonic() -> OpenSubsonic:
+    return get_opensubsonic()
+
+
 class TestEndpoints:
     """Test OpenSubsonic endpoints."""
+
+    @pytest.mark.skipif(on_navidrome, reason="Not implemented on Navidrome")
+    def test_add_chat_message(self, opensubsonic: OpenSubsonic):
+        assert opensubsonic.add_chat_message("pysonic test message").is_response_ok()
 
     def test_ping(self, opensubsonic: OpenSubsonic):
         assert opensubsonic.ping().is_response_ok()
