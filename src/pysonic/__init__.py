@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from httpx import Client
 
-import responses
+from . import responses
 
 if TYPE_CHECKING:
     from httpx import Response
@@ -19,14 +19,14 @@ class OpenSubsonic:
     client: str
     """Client name."""
     username: str
-    """Base URL."""
+    """Username."""
 
     _salt: str
     """Salt for the user's password."""
     _token: str
     """Token to authenticate with.
-    This is the MD5 hash of the user's password and `_salt`,
-     which are concatenated together as UTF-8 strings.
+        This is the MD5 hash of the user's password and `_salt`,
+        which are concatenated together as UTF-8 strings.
     """
     _client: Client
     """httpx client.
@@ -38,8 +38,8 @@ class OpenSubsonic:
         Args:
             client (str): Client name.
             url (str): Base URL. Include subdirectory and protocol,
-                        but do not include a trailing slash.
-                       Example: "https://navidrome:4533/navidrome".
+                but do not include a trailing slash.
+                Example: "https://navidrome:4533/navidrome".
             username (str): Username to authenticate with.
             password (str): Password to authenticate with.
         """
