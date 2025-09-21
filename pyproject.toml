@@ -1,0 +1,21 @@
+[project]
+name = "pysonic"
+version = "0.0.1"
+description = "A pythonic wrapper for OpenSubsonic's REST API."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"
+docstring-code-format = true
+docstring-code-line-length = "dynamic"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D413"]
