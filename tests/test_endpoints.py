@@ -24,6 +24,11 @@ on_navidrome = get_opensubsonic().ping().type == "navidrome"
 def opensubsonic() -> OpenSubsonic:
     return get_opensubsonic()
 
+# TODO: Create mock server to test implementation of...
+#   - add_chat_message (properly),  # noqa: ERA001
+#   - change_password,
+#   - create_bookmark,
+#   - etc.
 
 class TestEndpoints:
     """Test OpenSubsonic endpoints."""

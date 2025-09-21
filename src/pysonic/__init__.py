@@ -64,9 +64,56 @@ class OpenSubsonic:
 
         Returns:
             responses.SubsonicResponse: An empty ``responses.SubsonicResponse`` element
-            on success
+            on success.
         """
         request = self._authenticated_request_to("addChatMessage", message=message)
+        return responses.SubsonicResponse(request.text)
+
+    def change_password(
+        self, username: str, password: str
+    ) -> responses.SubsonicResponse:
+        """Changes the password of an existing user on the server, using the following
+            parameters. You can only change your own password unless you have admin
+            privileges.
+
+        Args:
+            username (str): The name of the user which should change its password.
+            password (str): The new password of the new user, either in clear text of
+                hex-encoded (see above).
+
+        Returns:
+            responses.SubsonicResponse: An empty ``responses.SubsonicResponse`` element
+            on success.
+        """  # noqa: D205
+        request = self._authenticated_request_to(
+            "addChatMessage", username=username, password=password
+        )
+        return responses.SubsonicResponse(request.text)
+
+    def create_bookmark(
+        self, id: str, position: float, comment: str | None = None  # noqa: A002
+    ) -> responses.SubsonicResponse:
+        """Creates or updates a bookmark (a position within a media file).
+        Bookmarks are personal and not visible to other users.
+
+        Args:
+            id (str): ID of the media file to bookmark. If a bookmark already exists for
+                this file it will be overwritten.
+            position (float): The position (in milliseconds) within the media file.
+            comment (str | None, optional): A user-defined comment.
+
+        Returns:
+            responses.SubsonicResponse: An empty ``responses.SubsonicResponse`` element
+            on success.
+        """  # noqa: D205
+        if comment is None:
+            request = self._authenticated_request_to(
+                "createBookmark", id=id, position=position
+            )
+        else:
+            request = self._authenticated_request_to(
+                "createBookmark", id=id, position=position, comment=comment
+            )
         return responses.SubsonicResponse(request.text)
 
     def ping(self) -> responses.SubsonicResponse:
@@ -74,7 +121,7 @@ class OpenSubsonic:
 
         Returns:
             responses.SubsonicResponse: An empty ``responses.SubsonicResponse`` element
-            on success
+            on success.
         """
         request = self._authenticated_request_to("ping")
         return responses.SubsonicResponse(request.text)
@@ -92,9 +139,9 @@ class OpenSubsonic:
             **kwargs,
         }  # pyright: ignore[reportUnknownVariableType]
 
-    def _authenticated_request_to(self,
-                                  endpoint: str,
-                                  **kwargs: dict[str, str]) -> "Response":
+    def _authenticated_request_to(
+        self, endpoint: str, **kwargs: dict[str, str]
+    ) -> "Response":
         return self._client.get(f"/{endpoint}", params=self._get_params(**kwargs))
 
     @staticmethod
