@@ -29,8 +29,7 @@ class OpenSubsonic:
         which are concatenated together as UTF-8 strings.
     """
     _client: Client
-    """httpx client.
-    """
+    """httpx client."""
 
     def __init__(self,
                  client: str,
@@ -153,6 +152,22 @@ class OpenSubsonic:
 
         return request.content
 
+    def get_music_directory(self, id: str) -> responses.DirectoryResponse:  # noqa: A002
+        """Returns a listing of all files in a music directory.
+        Typically used to get list of albums for an artist, or list of songs for an
+        album.
+
+        Args:
+            id (str): A string which uniquely identifies the music folder.
+                Obtained by calls to ``get_indexes`` or ``get_music_directory``.
+
+        Returns:
+            responses.DirectoryResponse: A ``responses.SubsonicResponse`` element with
+                a nested ``fields.DirectoryField`` element on success.
+        """
+        request = self._authenticated_request_to("getMusicDirectory", id=id)
+        return responses.DirectoryResponse(request.text)
+
     def ping(self) -> responses.SubsonicResponse:
         """Test connectivity with the server.
 
@@ -162,6 +177,8 @@ class OpenSubsonic:
         """
         request = self._authenticated_request_to("ping")
         return responses.SubsonicResponse(request.text)
+
+    # endregion
 
     # region Internal workings
 
