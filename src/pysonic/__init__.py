@@ -32,7 +32,12 @@ class OpenSubsonic:
     """httpx client.
     """
 
-    def __init__(self, client: str, url: str, username: str, password: str) -> None:
+    def __init__(self,
+                 client: str,
+                 url: str,
+                 username: str,
+                 password: str,
+                 test_connection: bool = True) -> None:  # noqa: FBT001, FBT002
         """Create a new OpenSubsonic client.
 
         Args:
@@ -42,6 +47,11 @@ class OpenSubsonic:
                 Example: "https://navidrome:4533/navidrome".
             username (str): Username to authenticate with.
             password (str): Password to authenticate with.
+            test_connection (bool, optional): Test if the connection is valid.
+                Defaults to True.
+
+        Raises:
+            ConnectionError: If ``test_connection`` and the connection is not valid.
         """
         self.client = client
         self.username = username
@@ -49,6 +59,12 @@ class OpenSubsonic:
         self._salt = self._get_salt()
         self._token = self._get_token(password, self._salt)
         self._client = Client(base_url=f"{url}/rest")
+
+        if test_connection:
+            ping = self.ping()
+            if not ping.is_response_ok():
+                error = "Failed to connect to OpenSubsonic"
+                raise ConnectionError(error)
 
     def __del__(self) -> None:
         """Tear down the client."""
@@ -131,6 +147,8 @@ class OpenSubsonic:
         request = self._authenticated_request_to("download", id=id)
         if "application/xml" in request.headers["Accept"]:
             # Request failed. Server returns HTTP 200 for some reason.
+            # Yes, Accept returns application/xml instead of text/xml as advertised on https://opensubsonic.netlify.app/docs/responses/directory/
+            #   or application/json as requested.
             return responses.SubsonicResponse(request.text)
 
         return request.content
