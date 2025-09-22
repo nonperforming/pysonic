@@ -99,7 +99,9 @@ class _Field:
                 value = timedelta(seconds=value)
             elif isinstance(value, dict):
                 # Treat as JSON object
-                value = _get_class(_camel_to_snake_case(variable_name).title())(value)
+                class_name = _snake_to_camel_case(variable_name)
+                class_name = f"{class_name[0].upper()}{class_name[1:]}"
+                value = _get_class(class_name)(value)
 
             setattr(self, variable_name, value)
         return self
@@ -389,6 +391,22 @@ class ItemGenreField(_Field):
 
     name: str
     """OpenSubsonic additional field. Genre name."""
+
+
+class MusicFolderField(_Field):
+    """Music folder."""
+
+    id: int
+    """The id."""
+    name: str | None
+    """The folder name."""
+
+
+class MusicFoldersField(_Field):
+    """Music folders."""
+
+    music_folder: list[MusicFolderField]
+    """The folders."""
 
 
 class RecordLabelField(_Field):

@@ -70,7 +70,8 @@ class OpenSubsonic:
         self._client.close()
 
     # region Endpoints
-    # Sort endpoints by alphabetical order
+    # From https://opensubsonic.netlify.app/docs/endpoints/
+    #  in alphabetical order
     def add_chat_message(self, message: str) -> responses.SubsonicResponse:
         """Adds a message to the chat log.
 
@@ -167,6 +168,16 @@ class OpenSubsonic:
         """
         request = self._authenticated_request_to("getMusicDirectory", id=id)
         return responses.DirectoryResponse(request.text)
+
+    def get_music_folders(self) -> responses.MusicFoldersResponse:
+        """Returns all configured top-level music folders.
+
+        Returns:
+            responses.MusicFoldersResponse: A ``responses.SubsonicResponse`` element
+                with a nested ``fields.MusicFoldersField`` element on success.
+        """
+        request = self._authenticated_request_to("getMusicFolders")
+        return responses.MusicFoldersResponse(request.text)
 
     def ping(self) -> responses.SubsonicResponse:
         """Test connectivity with the server.

@@ -43,3 +43,9 @@ class DirectoryResponse(SubsonicResponse):
 
     directory: fields.DirectoryField
     """Directory."""
+
+class MusicFoldersResponse(SubsonicResponse):
+    """Music folders."""
+
+    music_folders: list[fields.MusicFolderField]
+    """Music folders."""
