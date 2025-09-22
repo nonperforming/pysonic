@@ -84,7 +84,7 @@ class OpenSubsonic:
         Returns:
             responses.SubsonicResponse: An empty ``responses.SubsonicResponse`` element
             on success.
-        """  # noqa: D205
+        """
         request = self._authenticated_request_to(
             "addChatMessage", username=username, password=password
         )
@@ -105,7 +105,7 @@ class OpenSubsonic:
         Returns:
             responses.SubsonicResponse: An empty ``responses.SubsonicResponse`` element
             on success.
-        """  # noqa: D205
+        """
         if comment is None:
             request = self._authenticated_request_to(
                 "createBookmark", id=id, position=position
@@ -115,6 +115,25 @@ class OpenSubsonic:
                 "createBookmark", id=id, position=position, comment=comment
             )
         return responses.SubsonicResponse(request.text)
+
+    def download(self, id: str) -> bytes | responses.SubsonicResponse:  # noqa: A002
+        """Downloads a given media file. Similar to ``stream``, but this method returns
+        the original media data without transcoding or downsampling.
+
+        Args:
+            id (str): A string which uniquely identifies the file to stream. Obtained by
+                calls to ``get_music_directory``.
+
+        Returns:
+            bytes | responses.SubsonicResponse: Returns binary data on success, or
+                ``responses.SubsonicResponse`` on error.
+        """
+        request = self._authenticated_request_to("download", id=id)
+        if "application/xml" in request.headers["Accept"]:
+            # Request failed. Server returns HTTP 200 for some reason.
+            return responses.SubsonicResponse(request.text)
+
+        return request.content
 
     def ping(self) -> responses.SubsonicResponse:
         """Test connectivity with the server.
@@ -140,7 +159,7 @@ class OpenSubsonic:
         }  # pyright: ignore[reportUnknownVariableType]
 
     def _authenticated_request_to(
-        self, endpoint: str, **kwargs: dict[str, str]
+        self, endpoint: str, **kwargs: dict[any, any]
     ) -> "Response":
         return self._client.get(f"/{endpoint}", params=self._get_params(**kwargs))
 
